@@ -7,12 +7,13 @@
 		<h2>Tasks in db:</h2>
 		<ul>
 			<li v-for="task in tasks">
-				{{ task }}
+				{{ task }} <span @click="deleteTask(task.id)">Delete</span>
 			</li>
 		</ul>
 	</div>
 </template>
 <script>
+	import { v4 as uuidv4 } from "uuid";
 	export default {
 		data() {
 			return {
@@ -39,11 +40,24 @@
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ task: "Default task", id: 111 }),
+					body: JSON.stringify({ task: "Default task", id: uuidv4() }),
 				})
 					.then((response) => response.json())
 					.then((data) => {
 						console.log("Success:", data);
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
+			},
+			// delete the task
+			deleteTask(taskId) {
+				console.log(taskId);
+				fetch("http://localhost:3000/tasks/" + taskId, {
+					method: "DELETE",
+				})
+					.then(() => {
+						console.log("deleted");
 					})
 					.catch((error) => {
 						console.error("Error:", error);
