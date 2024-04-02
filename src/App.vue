@@ -1,47 +1,62 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+	<h1>Type your tasks here</h1>
+	<div>
+		<div><input type="text" /> <span @click="addTask">Add</span></div>
+	</div>
+	<div>
+		<h2>Tasks in db:</h2>
+		<ul>
+			<li v-for="task in tasks">
+				{{ task }}
+			</li>
+		</ul>
+	</div>
 </template>
+<script>
+	export default {
+		data() {
+			return {
+				tasks: [],
+			};
+		},
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+		methods: {
+			// get the tasks from the json server
+			getTasks() {
+				fetch("http://localhost:3000/tasks")
+					.then((response) => response.json())
+					.then((data) => {
+						this.tasks = data;
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
+			},
+			// add the default task
+			addTask() {
+				fetch("http://localhost:3000/tasks", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ task: "Default task", id: 111 }),
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						console.log("Success:", data);
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
+			},
+		},
+		// when app is mounted, get the tasks
+		mounted() {
+			this.getTasks();
+		},
+		// when app is updated, get the tasks
+		updated() {
+			this.getTasks();
+		},
+	};
+</script>
