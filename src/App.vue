@@ -1,13 +1,16 @@
 <template>
 	<h1>Type your tasks here</h1>
 	<div>
-		<div><input type="text" /> <span @click="addTask">Add</span></div>
+		<div>
+			<input type="text" v-model="newTask" @keyup.enter="addTask" />
+			<span @click="addTask">Add</span>
+		</div>
 	</div>
 	<div>
 		<h2>Tasks in db:</h2>
 		<ul>
 			<li v-for="task in tasks">
-				{{ task }} <span @click="deleteTask(task.id)">Delete</span>
+				{{ task.title }} <span @click="deleteTask(task.id)">Delete</span>
 			</li>
 		</ul>
 	</div>
@@ -17,6 +20,7 @@
 	export default {
 		data() {
 			return {
+				newTask: "",
 				tasks: [],
 			};
 		},
@@ -40,11 +44,12 @@
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ task: "Default task", id: uuidv4() }),
+					body: JSON.stringify({ title: this.newTask, id: uuidv4() }),
 				})
 					.then((response) => response.json())
 					.then((data) => {
 						console.log("Success:", data);
+						this.newTask = "";
 					})
 					.catch((error) => {
 						console.error("Error:", error);
