@@ -3,14 +3,17 @@
 	<div>
 		<div>
 			<input type="text" v-model="newTask" @keyup.enter="addTask" />
-			<span @click="addTask">Add</span>
+			<span @click="addTask" class="text-primary-green">Add</span>
 		</div>
 	</div>
 	<div>
 		<h2>Tasks in db:</h2>
 		<ul>
 			<li v-for="task in tasks">
-				{{ task.title }} <span @click="deleteTask(task.id)">Delete</span>
+				{{ task.title }}
+				<span @click="deleteTask(task.id)" class="text-primary-red"
+					>Delete</span
+				>
 			</li>
 		</ul>
 	</div>
