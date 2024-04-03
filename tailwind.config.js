@@ -6,7 +6,6 @@ export default {
 			colors: {
 				"primary-green": "#41B883",
 				"secondary-green": "#34495E",
-				"accent-green": "#35495E",
 				"primary-red": "#EF2D20",
 				"secondary-red": "#F3F4F6",
 				"accent-red": "#1F2937",
