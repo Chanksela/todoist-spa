@@ -16,20 +16,26 @@
         Add
       </span>
     </div>
-
     <div>
       <h2 class="text-lg">Current Tasks</h2>
       <ul>
         <li
-          v-for="task in tasks"
-          class="my-4 flex items-center justify-between rounded bg-white px-2 py-4 shadow-sm"
+          v-for="task in currentTasks"
+          class="my-4 flex items-center justify-between rounded-lg bg-white px-2 py-4 shadow-sm"
         >
           {{ task.title }}
-          <span
-            @click="deleteTask(task.id)"
-            class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-            >Delete</span
-          >
+          <div class="flex gap-2">
+            <span
+              @click="completeTask(task.id)"
+              class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+              >Done</span
+            >
+            <span
+              @click="deleteTask(task.id)"
+              class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+              >Delete</span
+            >
+          </div>
         </li>
       </ul>
     </div>
@@ -37,12 +43,14 @@
       <h2 class="text-lg">Completed Tasks</h2>
       <ul>
         <li
-          v-for="task in tasks"
-          class="my-4 flex items-center justify-between rounded bg-white px-2 py-4 shadow-sm"
+          v-for="task in completedTasks"
+          class="my-4 flex items-center justify-between rounded-lg bg-slate-300 px-2 py-4 shadow-sm"
         >
-          {{ task.title }}
+          <span class="line-through">
+            {{ task.title }}
+          </span>
           <span
-            @click="deleteTask(task.id)"
+            @click="undoTask(task.id)"
             class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
             >Undo</span
           >
@@ -60,7 +68,6 @@ export default {
       tasks: [],
     };
   },
-
   methods: {
     // get the tasks from the json server
     getTasks() {
@@ -83,7 +90,11 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: this.newTask, id: uuidv4() }),
+        body: JSON.stringify({
+          title: this.newTask,
+          completed: false,
+          id: uuidv4(),
+        }),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -107,8 +118,54 @@ export default {
           console.error("Error:", error);
         });
     },
+    // complete the task
+    completeTask(taskId) {
+      fetch("http://localhost:3000/tasks/" + taskId, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: true,
+        }),
+      })
+        .then(() => {
+          console.log("completed");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
+    // undo the task
+    undoTask(taskId) {
+      fetch("http://localhost:3000/tasks/" + taskId, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: false,
+        }),
+      })
+        .then(() => {
+          console.log("completed");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
   },
-  // when app is mounted, get the tasks
+  computed: {
+    // filter current tasks
+    currentTasks() {
+      return this.tasks.filter((task) => !task.completed);
+    },
+    // filter completed tasks
+    completedTasks() {
+      return this.tasks.filter((task) => task.completed);
+    },
+    // when app is mounted, get the tasks
+  },
   mounted() {
     this.getTasks();
   },
