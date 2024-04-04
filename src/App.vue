@@ -24,7 +24,7 @@
           :key="task.id"
           class="my-4 flex flex-col items-center rounded-lg bg-white px-2 py-4 shadow-sm"
         >
-          <div class="flex w-full items-center justify-between gap-2">
+          <!-- <div class="flex w-full items-center justify-between gap-2">
             <span v-if="task.id !== editableTaskId || !edit">
               {{ task.title }}
             </span>
@@ -63,7 +63,8 @@
                 >Delete</span
               >
             </div>
-          </div>
+          </div> -->
+          <TaskItem :task="task" />
         </li>
       </ul>
     </div>
@@ -89,14 +90,19 @@
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
+
+import TaskItem from "./components/TaskItem.vue";
 export default {
+  components: {
+    TaskItem,
+  },
   data() {
     return {
       newTask: "",
       tasks: [],
-      editableTaskId: "",
-      editableTaskTitle: "",
-      edit: false,
+      // editableTaskId: "",
+      // editableTaskTitle: "",
+      // edit: false,
     };
   },
   methods: {
@@ -136,64 +142,7 @@ export default {
           console.error("Error:", error);
         });
     },
-    // edit the task name
-    getEditableTaskName(task) {
-      this.edit = !this.edit;
-      this.editableTaskId = task.id;
-      this.editableTaskTitle = task.title;
-    },
-    updateTaskName(taskId) {
-      if (!this.editableTaskTitle.length > 0) {
-        return;
-      }
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application-json",
-        },
-        body: JSON.stringify({
-          title: this.editableTaskTitle,
-        }),
-      })
-        .then(() => {
-          console.log("updated");
-          this.edit = !this.edit;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
-    // delete the task
-    deleteTask(taskId) {
-      console.log(taskId);
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "DELETE",
-      })
-        .then(() => {
-          console.log("deleted");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
-    // complete the task
-    completeTask(taskId) {
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          completed: true,
-        }),
-      })
-        .then(() => {
-          console.log("completed");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
+
     // undo the task
     undoTask(taskId) {
       fetch("http://localhost:3000/tasks/" + taskId, {
