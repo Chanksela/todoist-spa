@@ -1,86 +1,120 @@
 <template>
-	<div class="bg-slate-100 shadow-md p-10 rounded-md">
-		<h1>Type your tasks here</h1>
-		<div>
-			<div>
-				<input type="text" v-model="newTask" @keyup.enter="addTask" />
-				<span @click="addTask" class="text-primary-green">Add</span>
-			</div>
-		</div>
-		<div>
-			<h2>Tasks in db:</h2>
-			<ul>
-				<li v-for="task in tasks">
-					{{ task.title }}
-					<span @click="deleteTask(task.id)" class="text-primary-red"
-						>Delete</span
-					>
-				</li>
-			</ul>
-		</div>
-	</div>
+  <div class="flex flex-col gap-6 rounded-md bg-slate-200 p-10 shadow-md">
+    <h1 class="py-4 text-center text-2xl">Type your tasks here</h1>
+    <div class="relative inline-block w-full">
+      <input
+        class="w-4/5 rounded-l-lg border-b-2 border-l-2 border-t-2 border-secondary-green px-4 py-2 outline-none"
+        type="text"
+        minlength="3"
+        v-model="newTask"
+        @keyup.enter="addTask"
+      />
+      <span
+        @click="addTask"
+        class="absolute inset-y-0 right-0 flex w-1/5 cursor-pointer items-center justify-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-secondary-green bg-secondary-green px-4 py-2 text-center text-primary-green duration-300 hover:bg-primary-green hover:text-secondary-green"
+      >
+        Add
+      </span>
+    </div>
+
+    <div>
+      <h2 class="text-lg">Current Tasks</h2>
+      <ul>
+        <li
+          v-for="task in tasks"
+          class="my-4 flex items-center justify-between rounded bg-white px-2 py-4 shadow-sm"
+        >
+          {{ task.title }}
+          <span
+            @click="deleteTask(task.id)"
+            class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+            >Delete</span
+          >
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-lg">Completed Tasks</h2>
+      <ul>
+        <li
+          v-for="task in tasks"
+          class="my-4 flex items-center justify-between rounded bg-white px-2 py-4 shadow-sm"
+        >
+          {{ task.title }}
+          <span
+            @click="deleteTask(task.id)"
+            class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+            >Undo</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 <script>
-	import { v4 as uuidv4 } from "uuid";
-	export default {
-		data() {
-			return {
-				newTask: "",
-				tasks: [],
-			};
-		},
+import { v4 as uuidv4 } from "uuid";
+export default {
+  data() {
+    return {
+      newTask: "",
+      tasks: [],
+    };
+  },
 
-		methods: {
-			// get the tasks from the json server
-			getTasks() {
-				fetch("http://localhost:3000/tasks")
-					.then((response) => response.json())
-					.then((data) => {
-						this.tasks = data;
-					})
-					.catch((error) => {
-						console.error("Error:", error);
-					});
-			},
-			// add the default task
-			addTask() {
-				fetch("http://localhost:3000/tasks", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ title: this.newTask, id: uuidv4() }),
-				})
-					.then((response) => response.json())
-					.then((data) => {
-						console.log("Success:", data);
-						this.newTask = "";
-					})
-					.catch((error) => {
-						console.error("Error:", error);
-					});
-			},
-			// delete the task
-			deleteTask(taskId) {
-				console.log(taskId);
-				fetch("http://localhost:3000/tasks/" + taskId, {
-					method: "DELETE",
-				})
-					.then(() => {
-						console.log("deleted");
-					})
-					.catch((error) => {
-						console.error("Error:", error);
-					});
-			},
-		},
-		// when app is mounted, get the tasks
-		mounted() {
-			this.getTasks();
-		},
-		// when app is updated, get the tasks
-		updated() {
-			this.getTasks();
-		},
-	};
+  methods: {
+    // get the tasks from the json server
+    getTasks() {
+      fetch("http://localhost:3000/tasks")
+        .then((response) => response.json())
+        .then((data) => {
+          this.tasks = data;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
+    // add the default task
+    addTask() {
+      // if input is empty, return
+      if (this.newTask === "") return;
+      // else send post request to store the task
+      fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: this.newTask, id: uuidv4() }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          this.newTask = "";
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
+    // delete the task
+    deleteTask(taskId) {
+      console.log(taskId);
+      fetch("http://localhost:3000/tasks/" + taskId, {
+        method: "DELETE",
+      })
+        .then(() => {
+          console.log("deleted");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
+  },
+  // when app is mounted, get the tasks
+  mounted() {
+    this.getTasks();
+  },
+  // when app is updated, get the tasks
+  updated() {
+    this.getTasks();
+  },
+};
 </script>
