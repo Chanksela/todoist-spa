@@ -1,14 +1,3 @@
 {
-  "tasks": [
-    {
-      "id": "a731c5cd-3ca2-4ef7-bcd4-1a39a6bdaa86",
-      "title": "sdasdasd",
-      "completed": false
-    },
-    {
-      "id": "5d7162e2-f6f6-4c05-aa93-9c0250b3bd8b",
-      "title": "sd",
-      "completed": false
-    }
-  ]
+  "tasks": []
 }
