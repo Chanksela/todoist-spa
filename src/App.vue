@@ -24,47 +24,8 @@
           :key="task.id"
           class="my-4 flex flex-col items-center rounded-lg bg-white px-2 py-4 shadow-sm"
         >
-          <!-- <div class="flex w-full items-center justify-between gap-2">
-            <span v-if="task.id !== editableTaskId || !edit">
-              {{ task.title }}
-            </span>
-            <div
-              v-if="task.id === editableTaskId && edit"
-              class="relative inline-block w-full"
-            >
-              <input
-                class="w-4/5 rounded-l-lg border-b-2 border-l-2 border-t-2 border-secondary-green px-4 py-2 outline-none"
-                type="text"
-                minlength="3"
-                v-model="editableTaskTitle"
-                @keyup.enter="updateTaskName(task.id)"
-              />
-              <span
-                @click="updateTaskName(task.id)"
-                class="absolute inset-y-0 right-0 flex w-1/5 cursor-pointer items-center justify-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-secondary-green bg-secondary-green px-4 py-2 text-center text-primary-green duration-300 hover:bg-primary-green hover:text-secondary-green"
-              >
-                Add
-              </span>
-            </div>
-            <div class="flex gap-2">
-              <span
-                @click="getEditableTaskName(task)"
-                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-                >Edit</span
-              >
-              <span
-                @click="completeTask(task.id)"
-                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-                >Done</span
-              >
-              <span
-                @click="deleteTask(task.id)"
-                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-                >Delete</span
-              >
-            </div>
-          </div> -->
           <TaskItem :task="task" />
+          <TaskChildItem :task="task" />
         </li>
       </ul>
     </div>
@@ -92,17 +53,16 @@
 import { v4 as uuidv4 } from "uuid";
 
 import TaskItem from "./components/TaskItem.vue";
+import TaskChildItem from "./components/TaskChildItem.vue";
 export default {
   components: {
     TaskItem,
+    TaskChildItem,
   },
   data() {
     return {
       newTask: "",
       tasks: [],
-      // editableTaskId: "",
-      // editableTaskTitle: "",
-      // edit: false,
     };
   },
   methods: {
