@@ -1,38 +1,3 @@
 {
-  "tasks": [
-    {
-      "id": "e393bff6-8b98-4456-8910-b524919b21bf",
-      "title": "test 2",
-      "completed": false,
-      "childTasks": [
-        {
-          "title": "test child",
-          "completed": false,
-          "id": "b6968715-bbd7-4246-bd03-f6a4f7a998b9"
-        },
-        {
-          "title": "test child 3",
-          "completed": false,
-          "id": "7ed108e0-ba48-4e13-acc0-c5d35789e1ab"
-        },
-        {
-          "title": "asd wqd ",
-          "completed": false,
-          "id": "5f6a3bbe-fcd1-4052-baac-2f08e1597791"
-        }
-      ]
-    },
-    {
-      "id": "7230b9a9-785c-437b-8e39-91f42b332c8b",
-      "title": "test 3",
-      "completed": false,
-      "childTasks": [
-        {
-          "title": "zxczxczxc",
-          "completed": false,
-          "id": "58147938-5202-4074-b608-753511d7ede6"
-        }
-      ]
-    }
-  ]
+  "tasks": []
 }
