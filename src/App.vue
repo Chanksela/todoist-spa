@@ -21,21 +21,50 @@
       <ul>
         <li
           v-for="task in currentTasks"
-          class="my-4 flex items-center justify-between rounded-lg bg-white px-2 py-4 shadow-sm"
+          :key="task.id"
+          class="my-4 flex flex-col items-center rounded-lg bg-white px-2 py-4 shadow-sm"
         >
-          {{ task.title }}
-          <div class="flex gap-2">
-            <span
-              @click="completeTask(task.id)"
-              class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-              >Done</span
+          <!-- <div class="flex w-full items-center justify-between gap-2">
+            <span v-if="task.id !== editableTaskId || !edit">
+              {{ task.title }}
+            </span>
+            <div
+              v-if="task.id === editableTaskId && edit"
+              class="relative inline-block w-full"
             >
-            <span
-              @click="deleteTask(task.id)"
-              class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-              >Delete</span
-            >
-          </div>
+              <input
+                class="w-4/5 rounded-l-lg border-b-2 border-l-2 border-t-2 border-secondary-green px-4 py-2 outline-none"
+                type="text"
+                minlength="3"
+                v-model="editableTaskTitle"
+                @keyup.enter="updateTaskName(task.id)"
+              />
+              <span
+                @click="updateTaskName(task.id)"
+                class="absolute inset-y-0 right-0 flex w-1/5 cursor-pointer items-center justify-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-secondary-green bg-secondary-green px-4 py-2 text-center text-primary-green duration-300 hover:bg-primary-green hover:text-secondary-green"
+              >
+                Add
+              </span>
+            </div>
+            <div class="flex gap-2">
+              <span
+                @click="getEditableTaskName(task)"
+                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+                >Edit</span
+              >
+              <span
+                @click="completeTask(task.id)"
+                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+                >Done</span
+              >
+              <span
+                @click="deleteTask(task.id)"
+                class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
+                >Delete</span
+              >
+            </div>
+          </div> -->
+          <TaskItem :task="task" />
         </li>
       </ul>
     </div>
@@ -61,11 +90,19 @@
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
+
+import TaskItem from "./components/TaskItem.vue";
 export default {
+  components: {
+    TaskItem,
+  },
   data() {
     return {
       newTask: "",
       tasks: [],
+      // editableTaskId: "",
+      // editableTaskTitle: "",
+      // edit: false,
     };
   },
   methods: {
@@ -105,37 +142,7 @@ export default {
           console.error("Error:", error);
         });
     },
-    // delete the task
-    deleteTask(taskId) {
-      console.log(taskId);
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "DELETE",
-      })
-        .then(() => {
-          console.log("deleted");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
-    // complete the task
-    completeTask(taskId) {
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          completed: true,
-        }),
-      })
-        .then(() => {
-          console.log("completed");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
+
     // undo the task
     undoTask(taskId) {
       fetch("http://localhost:3000/tasks/" + taskId, {
@@ -164,8 +171,8 @@ export default {
     completedTasks() {
       return this.tasks.filter((task) => task.completed);
     },
-    // when app is mounted, get the tasks
   },
+  // when app is mounted, get the tasks
   mounted() {
     this.getTasks();
   },
