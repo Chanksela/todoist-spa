@@ -131,6 +131,7 @@ export default {
           title: this.newTask,
           completed: false,
           id: uuidv4(),
+          childTasks: [],
         }),
       })
         .then((response) => response.json())
