@@ -64,6 +64,8 @@
   </div>
 </template>
 <script>
+import { doc, deleteDoc } from "firebase/firestore";
+import db from "../firebase/init";
 import { v4 as uuidv4 } from "uuid";
 export default {
   props: {
@@ -146,17 +148,8 @@ export default {
         });
     },
     // delete the task
-    deleteTask(taskId) {
-      console.log(taskId);
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "DELETE",
-      })
-        .then(() => {
-          console.log("deleted");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+    async deleteTask(taskId) {
+      await deleteDoc(doc(db, "tasks", taskId));
     },
     // complete the task
     completeTask(taskId) {

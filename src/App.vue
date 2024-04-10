@@ -51,7 +51,13 @@
 </template>
 <script>
 import db from "./firebase/init";
-import { collection, onSnapshot, addDoc } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
