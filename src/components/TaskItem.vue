@@ -64,7 +64,7 @@
   </div>
 </template>
 <script>
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import db from "../firebase/init";
 import { v4 as uuidv4 } from "uuid";
 export default {
@@ -96,78 +96,56 @@ export default {
       this.parentTaskId = task.id;
     },
     // add a child task
-    addChildTask(taskId) {
+    async addChildTask(taskId) {
       if (!this.childTaskTitle.length > 0) {
         return;
       }
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+
+      // Reference to the parent task document
+      const parentTaskRef = doc(db, "tasks", taskId);
+      // Get the parent task document snapshot
+      const parentTaskSnapshot = await getDoc(parentTaskRef);
+      // Extract data from the parent task document
+      const parentTaskData = parentTaskSnapshot.data();
+
+      // Create a new child task object
+      const newChildTask = {
+        title: this.childTaskTitle,
+        completed: false,
+      };
+
+      // Update the childTasks field in the parent task document
+      await updateDoc(parentTaskRef, {
+        childTasks: {
+          ...parentTaskData.childTasks, // Keep existing child tasks
+          [uuidv4()]: newChildTask, // Add the new child task with a generated UUID
         },
-        body: JSON.stringify({
-          childTasks: [
-            ...this.task.childTasks,
-            {
-              title: this.childTaskTitle,
-              completed: false,
-              id: uuidv4(),
-            },
-          ],
-        }),
-      })
-        .then(() => {
-          console.log("added a child task");
-          this.addChild = !this.addChild;
-          this.childTaskTitle = "";
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      });
+
+      // Reset input and state
+      this.addChild = false;
+      this.childTaskTitle = "";
     },
     // update the task name
-    updateTaskName(taskId) {
+    async updateTaskName(taskId) {
       if (!this.editableTaskTitle.length > 0) {
         return;
       }
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application-json",
-        },
-        body: JSON.stringify({
-          title: this.editableTaskTitle,
-        }),
-      })
-        .then(() => {
-          console.log("updated");
-          this.edit = !this.edit;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      await updateDoc(doc(db, "tasks", taskId), {
+        title: this.editableTaskTitle,
+      });
+      this.edit = !this.edit;
+      this.editableTaskTitle = "";
     },
     // delete the task
     async deleteTask(taskId) {
       await deleteDoc(doc(db, "tasks", taskId));
     },
     // complete the task
-    completeTask(taskId) {
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          completed: true,
-        }),
-      })
-        .then(() => {
-          console.log("completed");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+    async completeTask(taskId) {
+      await updateDoc(doc(db, "tasks", taskId), {
+        completed: true,
+      });
     },
   },
 };
