@@ -51,7 +51,7 @@
 </template>
 <script>
 import db from "./firebase/init";
-import { collection, onSnapshot, doc, setDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc } from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
@@ -88,7 +88,7 @@ export default {
       // if input is empty, return
       if (this.newTask === "") return;
       // add the task to the firebase database
-      await setDoc(doc(db, "tasks", this.newTask), {
+      await addDoc(collection(db, "tasks"), {
         title: this.newTask,
         completed: false,
         childTasks: [],
