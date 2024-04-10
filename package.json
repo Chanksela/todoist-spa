@@ -9,8 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "json-server": "^1.0.0-alpha.23",
-    "uuid": "^9.0.1",
+    "firebase": "^10.10.0",
     "vue": "^3.4.21"
   },
   "devDependencies": {

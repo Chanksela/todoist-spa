@@ -50,7 +50,8 @@
   </div>
 </template>
 <script>
-import { v4 as uuidv4 } from "uuid";
+import db from "./firebase/init";
+import { collection, getDocs } from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
@@ -66,16 +67,19 @@ export default {
     };
   },
   methods: {
-    // get the tasks from the json server
-    getTasks() {
-      fetch("http://localhost:3000/tasks")
-        .then((response) => response.json())
-        .then((data) => {
-          this.tasks = data;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+    async getTasks() {
+      const querySnapshot = await getDocs(collection(db, "tasks"));
+      let fbTasks = [];
+      querySnapshot.forEach((doc) => {
+        const task = {
+          id: doc.id,
+          title: doc.data().title,
+          completed: doc.data().completed,
+          childTasks: doc.data().childTasks,
+        };
+        fbTasks.push(task);
+      });
+      this.tasks = fbTasks;
     },
     // add the default task
     addTask() {
@@ -138,8 +142,5 @@ export default {
     this.getTasks();
   },
   // when app is updated, get the tasks
-  updated() {
-    this.getTasks();
-  },
 };
 </script>
