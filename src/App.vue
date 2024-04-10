@@ -51,7 +51,7 @@
 </template>
 <script>
 import db from "./firebase/init";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, doc, setDoc } from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
@@ -67,47 +67,35 @@ export default {
     };
   },
   methods: {
-    async getTasks() {
-      const querySnapshot = await getDocs(collection(db, "tasks"));
-      let fbTasks = [];
-      querySnapshot.forEach((doc) => {
-        const task = {
-          id: doc.id,
-          title: doc.data().title,
-          completed: doc.data().completed,
-          childTasks: doc.data().childTasks,
-        };
-        fbTasks.push(task);
+    // get the tasks from the firebase database
+    getTasks() {
+      onSnapshot(collection(db, "tasks"), (querySnapshot) => {
+        let fbTasks = [];
+        querySnapshot.forEach((doc) => {
+          const task = {
+            id: doc.id,
+            title: doc.data().title,
+            completed: doc.data().completed,
+            childTasks: doc.data().childTasks,
+          };
+          fbTasks.push(task);
+        });
+        this.tasks = fbTasks;
       });
-      this.tasks = fbTasks;
     },
     // add the default task
-    addTask() {
+    async addTask() {
       // if input is empty, return
       if (this.newTask === "") return;
-      // else send post request to store the task
-      fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: this.newTask,
-          completed: false,
-          id: uuidv4(),
-          childTasks: [],
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          this.newTask = "";
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      // add the task to the firebase database
+      await setDoc(doc(db, "tasks", this.newTask), {
+        title: this.newTask,
+        completed: false,
+        childTasks: [],
+      });
+      // clear the input
+      this.newTask = "";
     },
-
     // undo the task
     undoTask(taskId) {
       fetch("http://localhost:3000/tasks/" + taskId, {
