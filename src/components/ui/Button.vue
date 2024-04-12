@@ -1,6 +1,6 @@
 <template>
   <span
-    class="flex items-center rounded-md bg-secondary-red px-4 py-2 duration-300 hover:cursor-pointer"
+    class="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-secondary-red duration-300 hover:cursor-pointer"
   >
     <slot></slot
   ></span>
