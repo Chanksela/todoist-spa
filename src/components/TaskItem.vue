@@ -39,27 +39,23 @@
         Add
       </span>
     </div>
-    <ButtonsWrapper>
-      <Button
-        @click="getParentTask(task)"
-        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
-        >Add Subtask</Button
-      >
-      <Button
-        @click="getEditableTaskName(task)"
-        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
-        >Edit
-      </Button>
-      <Button
+    <ButtonsWrapper
+      ><DoneIcon
         @click="completeTask(task.id)"
-        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
-        >Done
-      </Button>
-      <Button
+        class="h-[30px] w-[30px] rounded-full bg-secondary-red fill-primary-green p-1 duration-300 hover:cursor-pointer hover:bg-primary-green hover:fill-white"
+      />
+      <EditIcon
+        @click="getEditableTaskName(task)"
+        class="h-[30px] w-[30px] rounded-full bg-secondary-red fill-primary-green p-1 duration-300 hover:cursor-pointer hover:bg-primary-green hover:fill-white"
+      />
+      <AddIcon
+        @click="getParentTask(task)"
+        class="h-[30px] w-[30px] rounded-full bg-secondary-red stroke-primary-green p-1 duration-300 hover:cursor-pointer hover:bg-primary-green hover:stroke-white"
+      />
+      <DeleteIcon
         @click="deleteTask(task.id)"
-        class="text-primary-red hover:bg-primary-red hover:text-secondary-red"
-        >Delete
-      </Button>
+        class="h-[30px] w-[30px] rounded-full bg-secondary-red stroke-primary-red p-1 duration-300 hover:cursor-pointer hover:bg-primary-red hover:stroke-white"
+      />
     </ButtonsWrapper>
   </div>
 </template>
@@ -71,11 +67,20 @@ import { v4 as uuidv4 } from "uuid";
 import ButtonsWrapper from "./ui/ButtonsWrapper.vue";
 import Button from "./ui/Button.vue";
 
+import AddIcon from "../assets/svg/add.svg";
+import EditIcon from "../assets/svg/edit.svg";
+import DoneIcon from "../assets/svg/done.svg";
+import DeleteIcon from "../assets/svg/delete.svg";
+
 export default {
   name: "TaskItem",
   components: {
     ButtonsWrapper,
     Button,
+    AddIcon,
+    EditIcon,
+    DoneIcon,
+    DeleteIcon,
   },
   props: {
     task: {
@@ -121,6 +126,7 @@ export default {
       const newChildTask = {
         title: this.childTaskTitle,
         completed: false,
+        id: uuidv4(),
       };
 
       // Update the childTasks field in the parent task document

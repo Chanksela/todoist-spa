@@ -3,32 +3,35 @@
     {{ task.title }}
   </span>
   <ButtonWrapper>
-    <Button
+    <UndoIcon
       @click="undoTask(task.id)"
-      class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
-      >Undo</Button
-    >
-    <Button
+      class="h-[30px] w-[30px] rounded-full bg-secondary-red stroke-primary-green p-1 duration-300 hover:cursor-pointer hover:bg-primary-green hover:stroke-white"
+    />
+    <DeleteIcon
       @click="deleteTask(task.id)"
-      class="text-primary-red hover:bg-primary-red hover:text-secondary-red"
-      >Delete
-    </Button>
+      class="h-[30px] w-[30px] rounded-full bg-secondary-red stroke-primary-red p-1 duration-300 hover:cursor-pointer hover:bg-primary-red hover:stroke-white"
+    />
   </ButtonWrapper>
 </template>
 <script>
 import { doc, updateDoc } from "firebase/firestore";
 import db from "../firebase/init";
 
+import deleteTask from "../mixins/deleteTask";
+
 import ButtonWrapper from "./ui/ButtonsWrapper.vue";
 import Button from "./ui/Button.vue";
 
-import deleteTask from "../mixins/deleteTask";
+import UndoIcon from "../assets/svg/undo.svg";
+import DeleteIcon from "../assets/svg/delete.svg";
 
 export default {
   name: "CompletedTaskItem",
   components: {
     ButtonWrapper,
     Button,
+    UndoIcon,
+    DeleteIcon,
   },
   mixins: [deleteTask],
   props: {
