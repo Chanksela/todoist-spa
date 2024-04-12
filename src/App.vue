@@ -36,14 +36,7 @@
           v-for="task in completedTasks"
           class="my-4 flex items-center justify-between rounded-lg bg-slate-300 px-2 py-4 shadow-sm"
         >
-          <span class="line-through">
-            {{ task.title }}
-          </span>
-          <Button
-            @click="undoTask(task.id)"
-            class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
-            >Undo</Button
-          >
+          <CompletedTaskItem :task="task"></CompletedTaskItem>
         </li>
       </ul>
     </div>
@@ -62,12 +55,17 @@ import {
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
 
+import CompletedTaskItem from "./components/CompletedTaskItem.vue";
+
+import ButtonWrapper from "./components/ui/ButtonsWrapper.vue";
 import Button from "./components/ui/Button.vue";
 
 export default {
   components: {
     TaskItem,
     TaskChildItem,
+    CompletedTaskItem,
+    ButtonWrapper,
     Button,
   },
   data() {
