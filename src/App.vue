@@ -56,7 +56,7 @@ import {
   onSnapshot,
   addDoc,
   doc,
-  deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
@@ -103,22 +103,15 @@ export default {
       this.newTask = "";
     },
     // undo the task
-    undoTask(taskId) {
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    async undoTask(taskId) {
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        await updateDoc(taskRef, {
           completed: false,
-        }),
-      })
-        .then(() => {
-          console.log("completed");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
         });
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
     },
   },
   computed: {
@@ -135,6 +128,5 @@ export default {
   mounted() {
     this.getTasks();
   },
-  // when app is updated, get the tasks
 };
 </script>
