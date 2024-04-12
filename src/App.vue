@@ -39,10 +39,10 @@
           <span class="line-through">
             {{ task.title }}
           </span>
-          <span
+          <Button
             @click="undoTask(task.id)"
-            class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-            >Undo</span
+            class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
+            >Undo</Button
           >
         </li>
       </ul>
@@ -61,10 +61,14 @@ import {
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
+
+import Button from "./components/ui/Button.vue";
+
 export default {
   components: {
     TaskItem,
     TaskChildItem,
+    Button,
   },
   data() {
     return {

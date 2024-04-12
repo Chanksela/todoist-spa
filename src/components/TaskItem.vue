@@ -40,21 +40,23 @@
       </span>
     </div>
     <div class="flex gap-2">
-      <span
+      <Button
         @click="getParentTask(task)"
-        class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-        >Add Child</span
+        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
+        >Add Subtask</Button
       >
-      <span
+
+      <Button
         @click="getEditableTaskName(task)"
-        class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-        >Edit</span
-      >
-      <span
+        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
+        >Edit
+      </Button>
+
+      <Button
         @click="completeTask(task.id)"
-        class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
-        >Done</span
-      >
+        class="text-primary-green hover:bg-primary-green hover:text-secondary-green"
+        >Done
+      </Button>
       <span
         @click="deleteTask(task.id)"
         class="rounded-md bg-secondary-red px-4 py-2 text-primary-red duration-300 hover:cursor-pointer hover:bg-primary-red hover:text-secondary-red"
@@ -67,7 +69,14 @@
 import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import db from "../firebase/init";
 import { v4 as uuidv4 } from "uuid";
+
+import Button from "./ui/Button.vue";
+
 export default {
+  name: "TaskItem",
+  components: {
+    Button,
+  },
   props: {
     task: {
       required: true,
