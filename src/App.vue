@@ -50,7 +50,14 @@
   </div>
 </template>
 <script>
-import { v4 as uuidv4 } from "uuid";
+import db from "./firebase/init";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
@@ -66,61 +73,45 @@ export default {
     };
   },
   methods: {
-    // get the tasks from the json server
+    // get the tasks from the firebase database
     getTasks() {
-      fetch("http://localhost:3000/tasks")
-        .then((response) => response.json())
-        .then((data) => {
-          this.tasks = data;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      onSnapshot(collection(db, "tasks"), (querySnapshot) => {
+        let fbTasks = [];
+        querySnapshot.forEach((doc) => {
+          const task = {
+            id: doc.id,
+            title: doc.data().title,
+            completed: doc.data().completed,
+            childTasks: doc.data().childTasks,
+          };
+          fbTasks.push(task);
         });
+        this.tasks = fbTasks;
+      });
     },
     // add the default task
-    addTask() {
+    async addTask() {
       // if input is empty, return
       if (this.newTask === "") return;
-      // else send post request to store the task
-      fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: this.newTask,
-          completed: false,
-          id: uuidv4(),
-          childTasks: [],
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          this.newTask = "";
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      // add the task to the firebase database
+      await addDoc(collection(db, "tasks"), {
+        title: this.newTask,
+        completed: false,
+        childTasks: [],
+      });
+      // clear the input
+      this.newTask = "";
     },
-
     // undo the task
-    undoTask(taskId) {
-      fetch("http://localhost:3000/tasks/" + taskId, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    async undoTask(taskId) {
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        await updateDoc(taskRef, {
           completed: false,
-        }),
-      })
-        .then(() => {
-          console.log("completed");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
         });
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
     },
   },
   computed: {
@@ -135,10 +126,6 @@ export default {
   },
   // when app is mounted, get the tasks
   mounted() {
-    this.getTasks();
-  },
-  // when app is updated, get the tasks
-  updated() {
     this.getTasks();
   },
 };
