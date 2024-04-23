@@ -31,7 +31,7 @@
 </template>
 <script>
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import db from "../firebase/init";
+import { db } from "../firebase/init";
 import deleteTask from "@/mixins/deleteTask";
 
 import ButtonsWrapper from "./ui/ButtonsWrapper.vue";

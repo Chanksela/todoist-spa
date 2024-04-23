@@ -1,5 +1,5 @@
 import { doc, deleteDoc } from "firebase/firestore";
-import db from "../firebase/init";
+import { db } from "../firebase/init";
 
 export default {
   methods: {

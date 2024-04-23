@@ -1,5 +1,23 @@
 <template>
   <div class="flex flex-col gap-6 rounded-md bg-slate-200 p-10 shadow-md">
+    <div class="register">
+      <form @submit.prevent="storeUser">
+        <div>
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" v-model="userEmail" />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            v-model="userPassword"
+          />
+        </div>
+        <button>Submit</button>
+      </form>
+    </div>
     <h1 class="py-4 text-center text-2xl">Type your tasks here</h1>
     <div class="relative inline-block w-full">
       <input
@@ -43,7 +61,7 @@
   </div>
 </template>
 <script>
-import db from "./firebase/init";
+import { db } from "./firebase/init";
 import {
   collection,
   onSnapshot,
@@ -51,6 +69,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 import TaskItem from "./components/TaskItem.vue";
 import TaskChildItem from "./components/TaskChildItem.vue";
@@ -70,6 +89,8 @@ export default {
   },
   data() {
     return {
+      userEmail: "",
+      userPassword: "",
       newTask: "",
       tasks: [],
     };
@@ -114,6 +135,21 @@ export default {
       } catch (error) {
         console.error("Error updating document: ", error);
       }
+    },
+    storeUser() {
+      const auth = getAuth();
+      const email = this.userEmail;
+      const password = this.userPassword;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCreditentials) => {
+          console.log("userCreditentials", userCreditentials);
+          this.userEmail = "";
+          this.userPassword = "";
+        })
+        .catch((error) => {
+          this.userPassword = "";
+          console.error("Error creating user: ", error);
+        });
     },
   },
   computed: {
