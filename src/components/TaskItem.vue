@@ -61,7 +61,7 @@
 </template>
 <script>
 import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
-import db from "../firebase/init";
+import { db } from "../firebase/init";
 import { v4 as uuidv4 } from "uuid";
 
 import ButtonsWrapper from "./ui/ButtonsWrapper.vue";
