@@ -15,4 +15,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is authenticated", user);
+    // Perform Firestore operations
+  } else {
+    console.log("User is not authenticated");
+    // Redirect to login page or show authentication UI
+  }
+});
+
 export { auth, db };
